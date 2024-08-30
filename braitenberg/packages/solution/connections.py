@@ -1,22 +1,26 @@
+import numpy as np
 from typing import Tuple
 
-import numpy as np
-
-
 def get_motor_left_matrix(shape: Tuple[int, int]) -> np.ndarray:
-    # TODO: write your function instead of this one
+    """
+    Define a weight matrix for the left motor.
+    High positive values in the right part of the image will make the left motor respond more to those areas.
+    """
     res = np.zeros(shape=shape, dtype="float32")
-    # these are random values
-    res[100:150, 100:150] = 1
-    res[300:, 200:] = 1
-    # ---
-    return res
+    res[:, :shape[1]//2] = 1
+    res[:, shape[1]//2:] = -1
 
+    return res
 
 def get_motor_right_matrix(shape: Tuple[int, int]) -> np.ndarray:
-    # TODO: write your function instead of this one
+    """
+    Define a weight matrix for the right motor.
+    High negative values in the left part of the image will make the right motor respond to those areas.
+    """
     res = np.zeros(shape=shape, dtype="float32")
-    # these are random values
-    res[100:150, 100:300] = -1
-    # ---
+
+    res[:, shape[1]//2:] = 1  # Right half of the image
+    res[:, :shape[1]//2] = -1
+
     return res
+
