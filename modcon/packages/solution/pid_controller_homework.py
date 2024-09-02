@@ -5,7 +5,7 @@ import yaml
 import os
 
 def PIDController(
-    v_0: float, y_ref: float, y_hat: float, prev_e_y: float, prev_int_y: float, delta_t: float #, theta_hat: float , prev_e: float
+    v_0: float, y_ref: float, y_hat: float, prev_e_y: float, prev_int_y: float, delta_t: float
 ) -> Tuple[float, float, float, float]:
     """
     PID performing lateral control.
@@ -26,27 +26,24 @@ def PIDController(
     """
 
     # Read PID gains from file
-    #script_dir = os.path.dirname(__file__)
-    #file_path = script_dir + "/GAINS.yaml"
+    script_dir = os.path.dirname(__file__)
+    file_path = script_dir + "/GAINS.yaml"
 
-    #with open(file_path) as f:
-        #gains = yaml.full_load(f)
-        #f.close()
+    with open(file_path) as f:
+        gains = yaml.full_load(f)
+        f.close()
+    
+    kp = gains['kp']
+    kd = gains['kd']
+    ki = gains['ki']
 
-    Kp = 5
-    Ki = 5
-    Kd = 1
-
-    e_dist = y_ref-y_hat
+    e_dist = y_ref - y_hat
 
     e_int_dist = prev_e_y + e_dist * delta_t
 
     delta_et_dist = (e_dist - e_int_dist) / delta_t
 
-
     # PID controller for omega
-    omega = Kp*e_dist + Ki*e_int_dist + Kd*delta_et_dist
-
-
+    omega = kp * e_dist + ki * e_int_dist + kd * delta_et_dist
 
     return v_0, omega, e_dist, e_int_dist
