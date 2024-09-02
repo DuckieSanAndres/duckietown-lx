@@ -5,49 +5,42 @@ import cv2
 
 
 def get_steer_matrix_left_lane_markings(shape: Tuple[int, int]) -> np.ndarray:
-    """
-    Args:
-        shape:              The shape of the steer matrix.
 
-    Return:
-        steer_matrix_left:  The steering (angular rate) matrix for Braitenberg-like control
-                            using the masked left lane markings (numpy.ndarray)
-    """
+    # TODO: write your function instead of this one
+    steer_matrix_left = np.zeros(shape)
+    steer_matrix_left[230:, 100:250] = -1
 
-    # TODO: implement your own solution here
-    steer_matrix_left = np.random.rand(*shape)
-    # ---
     return steer_matrix_left
 
 
 def get_steer_matrix_right_lane_markings(shape: Tuple[int, int]) -> np.ndarray:
-    """
-    Args:
-        shape:               The shape of the steer matrix.
 
-    Return:
-        steer_matrix_right:  The steering (angular rate) matrix for Braitenberg-like control
-                             using the masked right lane markings (numpy.ndarray)
-    """
+ # TODO: write your function instead of this one
+    steer_matrix_right = np.zeros(shape)
+    steer_matrix_right[220:, 400:680] = 1
 
-    # TODO: implement your own solution here
-    steer_matrix_right = np.random.rand(*shape)
-    # ---
     return steer_matrix_right
 
 
 def detect_lane_markings(image: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Args:
-        image: An image from the robot's camera in the BGR color space (numpy.ndarray)
-    Return:
-        mask_left_edge:   Masked image for the dashed-yellow line (numpy.ndarray)
-        mask_right_edge:  Masked image for the solid-white line (numpy.ndarray)
-    """
-    h, w, _ = image.shape
+    imgbgr = image
+    img = cv2.cvtColor(imgbgr, cv2.COLOR_BGR2HSV)
+    imgg = cv2.cvtColor(imgbgr, cv2.COLOR_BGR2GRAY)
 
-    # TODO: implement your own solution here
-    mask_left_edge = np.random.rand(h, w)
-    mask_right_edge = np.random.rand(h, w)
+    mask_ground = np.ones(imgg.shape, dtype=np.uint8)
+    mask_ground[0:180, ::] = 0
+
+    white_lower_hsv = np.array([0, 0, 150])
+    white_upper_hsv = np.array([180, 50, 255])
+    yellow_lower_hsv = np.array([20, 45, 150])
+    yellow_upper_hsv = np.array([40, 255, 255])
+
+
+    mask_white = cv2.inRange(img, white_lower_hsv, white_upper_hsv)
+    mask_yellow = cv2.inRange(img, yellow_lower_hsv, yellow_upper_hsv)
+
+    mask_left_edge = mask_ground * mask_yellow
+    mask_right_edge = mask_ground * mask_white
+
 
     return mask_left_edge, mask_right_edge
